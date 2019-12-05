@@ -24,7 +24,7 @@ def intcode(r):
         pos +=4
     return r
 
-#def controller(f,pos):
+# def controller(f,pos):
 def umm():
     f = open('input2.txt', 'r')
     x=0
