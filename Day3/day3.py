@@ -1,6 +1,8 @@
 import math
+# O(N^2) so it's really slow, and bad, but I couldn't think of a better way to do it off the top of my head :/
+# actually this might be n^3 :( 
 def proj():
-    f = open('testfile.txt', 'r')
+    f = open('input.txt', 'r')
     both =[]
     for line in f:
         commands = line.split(",")
@@ -8,58 +10,45 @@ def proj():
         x=0
         y=0
         #0,0 is a valid position, just not to be returned
-        cp = [x,y]
+        cp = [x,y,0]
         positions.append(cp)
+        steps = 0
         for command in commands:
             direction = command[0]
             number = int(command[1:])
-            #print('{0}, {1}'.format(direction,number))
-            if (direction == "U"):
-                y += number
-            elif (direction =="D"):
-                y -= number
-            elif (direction == "R"):
-                x += number
-            else:
-                x -= number
-            cp = [x,y]
-            positions.append(cp)
+            counter = 0
+
+            while (counter < number):
+                if (direction == "U"):
+                    y += 1
+                elif (direction =="D"):
+                    y -= 1
+                elif (direction == "R"):
+                    x += 1
+                else:
+                    x -= 1
+                counter +=1
+                steps += 1
+                cp = [x,y,steps]
+                positions.append(cp)
         both.append(positions)
-    checker(both[0],both[1])
+    checker(both)
 
-checker(lines1,lines2):
-for p1,p2 in zip(lines1[0::2],lines1[1::2]):
-    for lp1,lp2 in zip(lines2[0::2],lines2[1::2]):
-
-
-lines_cross(l1,l2):
-    if (l2[0][0]  < l1[0][0] < l2[1][0]):
-
-# def proj2():
-#     positions =[]
-#     f = open('testfile.txt','r')
-#     line1 = f.readline()
-#     commands = line1.split(",")
-#     x=0
-#     y=0
-#     for command in commands:
-#         direction = command[0]
-#         number = int(command[1:])
-#         if (direction == "U"):
-#             y += number
-#         elif (direction =="D"):
-#             y -= number
-#         elif (direction == "R"):
-#             x += number
-#         else:
-#             x -= number
-#         cp = [x,y]
-#         positions.append(cp)
-#
-#     line2 = f.readline()
-#     commands = line2.split(",")
-#     x=0
-#     y=0
+def checker(both):
+    hits =[]
+    for p1 in both[0]:
+        for p2 in both[1]:
+            if (p1[0] == p2[0] and p1[1] == p2[1]):
+                hits.append([p1,p2])
+    distances=[]
+    for h in hits:
+        print (h)
+        dist = h[0][2] + h[1][2]
+        #dist = abs(h[0]) +abs(h[1])
+        distances.append(dist)
+    print(hits)
+    distances.sort()
+    print(distances[1])
 
 
-proj2()
+proj()
