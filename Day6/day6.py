@@ -1,35 +1,73 @@
-#lmao help
-# This seems like it should probably be some kind of recursive solution
-def filehander (f):
+import math
+
+def filehandler (f):
     instructions = []
     for line in f:
         # ok
-        line.split(")")
-        instructions.append(line[0],line[1])
+        l = line.split(")")
+        #print(line)
+        l[1] = l[1][:-1]
+        instructions.append([l[0],l[1]])
     return instructions
 
-# this also might require some kind of list-like data structure
-# I have no idea how to write classes in python LMAO
-# I also don't want to make a data structure
-
-def sort(ins):
-    nds = {}
-    nodes = []
+def main(ins):
+    sorted = []
     for x in ins:
-        nds.add(x[1])
-    for x in nds:
-        nodes.append(Node(x))
-# what I want to do :
-# find root,
-# find things branching from root
-# give every object a distance_from_root type deal
-class Node():
-    data = ""
-    orbits = ''
-    def __init__(self,data=None,orbits =None)
-        self.data = data
-        self.orbits = orbits
+        flag = True
+        path = []
+        path.append([x[0],x[1]])
+        while(flag):
+            n = findnext(x[0],ins)
+            if n == -1:
+                sorted.append(path)
+                break
+            else:
+                path.append(n)
+                x = n
+    #print(sorted)
+    y=[]
+    san=[]
+    for x in sorted:
+
+        #print(x[0][1])
+        if x[0][1] == 'YOU':
+            print('found YOU')
+            y = x
+        if x[0][1] == 'SAN':
+            print('found SAN')
+            san = x
+    commonNode(y,san)
+    # This is the solution to part 1:
+    distances(sorted)
+#278 too high
+# it was 277 all along, I just typed it wrong the first time I guess :/
+def commonNode(you,san):
+    dist = 0
+    for x in you:
+        c = 0
+        dist +=1
+        for y in san:
+            if x[0] == y[0]:
+                dist += c
+                dist -=1
+                print("jumps required:" + str(dist))
+                return dist
+            c +=1
+    print(-1)
+    return -1
 
 
-class NodeSet(Node):
-    pass
+def distances(sor):
+    total =0
+    for x in sor:
+        total += len(x)
+    print ("Distance:" + str(total))
+    return total
+
+def findnext(x,ins):
+    for z in ins:
+        if z[1] == x:
+            return [z[0],z[1]]
+    return -1
+
+print(main(filehandler(open('input.txt','r'))))
