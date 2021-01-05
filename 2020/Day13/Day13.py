@@ -53,6 +53,40 @@ def findConsecutiveTime(sf=1): # this might work, and also might take a REALLY l
         offset += int(busses[0])
     return -1 # no answer found... this might never run
 
+
+def findCons():
+    busses = getInput()[1].split(",")
+    b = [] # busses but with correct types...
+    for bus in busses:
+        if bus != "x":
+            b.append(int(bus))
+        else:
+            b.append("x")
+    print(b)
+    found = False
+    count = 0
+#  starting with 7 and 13 7*13 = 91
+# and meetingplace1 is 77 ( you find this), then every subsequent meeting place is 77 + (7*13) so 168 is 2nd valid number and so on
+
+    while not found:
+        #print(f"{count}")
+        if count % b[0] == 0:
+            if (count +1) % b[1] == 0:
+                print(f"{count} is VALID")
+                print({count})
+                found = True
+        count += b[0]
+    found = False
+    while not found:
+        # check here
+        count += (b[0]*b[1])
+
+# this is kind of the general idea, but it has to scale up too 
+
+
+
+
+
 # so I've done some reading while waiting for this to run ( heh), and I guess
 #a) all the bus times are prime, and
 #b) because of this there is an algorithmic way to solve it, but I don't know it, and in the discussion it was implied it would be tough to figure out without knowing it.
@@ -61,4 +95,5 @@ def findConsecutiveTime(sf=1): # this might work, and also might take a REALLY l
 
 #print(nearestFactor(splitInput()))
 print(findBestTime())
-print(findConsecutiveTime(10000000000000)) # added an offset to near the lower bound to speed things up a *little*
+#print(findConsecutiveTime(10000000000000)) # added an offset to near the lower bound to speed things up a *little*
+print(findCons())
