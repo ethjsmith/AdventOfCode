@@ -35,8 +35,8 @@ def answer():
         paths[x] = 0
     lst.insert(0,0)
     for i,num  in enumerate(lst):
-        for x in range(1,3):
-            if i+x < len(lst)-1 and lst[i+x]-num <= 3:
+        for x in range(1,4):
+            if i+x <= len(lst)-1 and lst[i+x]-num <= 3:
                 print(f"can get from {num} to {lst[i+x]}, +1 route ")
                 paths[lst[i+x]] += paths[lst[i]]
 
