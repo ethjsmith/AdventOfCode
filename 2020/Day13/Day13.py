@@ -1,4 +1,5 @@
 import sys
+from math import gcd
 def getInput():
     with open(sys.argv[1]) as f:
         lst = f.readlines()
@@ -53,8 +54,15 @@ def findConsecutiveTime(sf=1): # this might work, and also might take a REALLY l
         offset += int(busses[0])
     return -1 # no answer found... this might never run
 
+def lcm(b):
+    lcm = 1
+    for x in b:
+        lcm = lcm*x // gcd(lcm,x)
+    return lcm
 
-def findCons():
+
+def findCons(): # this is basically an implementation of the "chineese remainder theorum, which I mostly understand now"
+# by far the hardest day so far, had to get a lot of hints
     busses = getInput()[1].split(",")
     b = [] # busses but with correct types...
     for bus in busses:
@@ -62,38 +70,17 @@ def findCons():
             b.append(int(bus))
         else:
             b.append("x")
-    print(b)
-    found = False
-    count = 0
-#  starting with 7 and 13 7*13 = 91
-# and meetingplace1 is 77 ( you find this), then every subsequent meeting place is 77 + (7*13) so 168 is 2nd valid number and so on
+    t = 0 # start at time zero
+    matched = [b[0]]
+    while True:
+        t += lcm(matched)  # increase the check by the lcm of busses that work
+        for i, bus in enumerate(b):
+            if bus != "x":
+                if (t+i) % bus == 0:
+                    if bus not in matched: # if a match hasn't been found yet then add it, otherwise its already there
+                        matched.append(bus)
+        if len(matched) == len(b) - b.count("x"):
+            return t
 
-    while not found:
-        #print(f"{count}")
-        if count % b[0] == 0:
-            if (count +1) % b[1] == 0:
-                print(f"{count} is VALID")
-                print({count})
-                found = True
-        count += b[0]
-    found = False
-    while not found:
-        # check here
-        count += (b[0]*b[1])
-
-# this is kind of the general idea, but it has to scale up too 
-
-
-
-
-
-# so I've done some reading while waiting for this to run ( heh), and I guess
-#a) all the bus times are prime, and
-#b) because of this there is an algorithmic way to solve it, but I don't know it, and in the discussion it was implied it would be tough to figure out without knowing it.
-
-
-
-#print(nearestFactor(splitInput()))
 print(findBestTime())
-#print(findConsecutiveTime(10000000000000)) # added an offset to near the lower bound to speed things up a *little*
 print(findCons())
