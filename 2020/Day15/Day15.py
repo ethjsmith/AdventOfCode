@@ -6,26 +6,32 @@ def getInput():
     return lst
 
 # heh, one liner input
-
-def playGame(tns):
-    lst = getInput()[0].split(",") # should be one line only
+def play(t):
+    lst = getInput()[0].split(",")
+    for n,x in enumerate(lst): # convert all datatypes to int
+        lst[n] = int(x)
     turns = {}
-    turncounter = 0
-    while turncounter < tns:
-        print(turns)
-        if turncounter < len(lst): # read in the first three turns
-            turns[int(lst[turncounter])] = turncounter
-            prev = lst[turncounter]
-            print(f"Turn {turncounter+1} : {prev}")
-        else:
-            if prev in turns:
-                turns[int(turns[prev])] = (turncounter-1)-turns[prev]
-                prev = turns[prev] # ? like this ?
-
+    counter = 0
+    prev = 0
+    for x in lst: # initalize the puzzle input
+        turns[x] = [counter]
+        counter += 1
+        prev = x
+    while counter < t: # in this section the goal is to find the number to be spoken
+        if prev in turns and len(turns[prev]) > 1:
+            new = turns[prev][len(turns[prev])-1] - turns[prev][len(turns[prev])-2]
+            if new in turns:
+                turns[new].append(counter)
             else:
-                turns[0] = turncounter
-                prev = 0
-            print(f"Turn {turncounter+1} : {prev}")
-        turncounter += 1
+                turns[new] = [counter]
+            prev = new
+        else:
+            turns[0].append(counter)
+            prev = 0
+        counter += 1
+        #print(f" Turn{counter}: {prev}")
     print(turns)
-print(playGame(10))
+    return prev
+print(play(2020)) # part 1
+print(play(30000000)) # part 2? slow, but no change needed?
+# I love computers
