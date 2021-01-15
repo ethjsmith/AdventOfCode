@@ -32,7 +32,7 @@ def getValid(lst):
 
         s = rule.split(": ")[1:] # this is a terrible workaround
         r = s[0].replace(': ',"-").replace(' ','-').split('-') # this is terrible
-        print(f" {r[0]},{r[1]},{r[3]},{r[4]}")
+        #print(f" {r[0]},{r[1]},{r[3]},{r[4]}")
         for x in range(int(r[0]),int(r[1])+1):
             valids[x] = 1
         for x in range(int(r[3]),int(r[4])+1):
@@ -65,7 +65,52 @@ def removeInvalid():
             new.append(x)
     return new
 
+def getValidRanges(lst):
+    ranges = []
+    valids = {}
+    # rule example "seat: 13-40 or 45-50"
+    for rule in lst[0]:
 
+        s = rule.split(": ")[1:] # this is a terrible workaround
+        r = s[0].replace(': ',"-").replace(' ','-').split('-') # this is terrible
+        #print(f" {r[0]},{r[1]},{r[3]},{r[4]}")
+        for x in range(int(r[0]),int(r[1])+1):
+            valids[x] = 1
+        for x in range(int(r[3]),int(r[4])+1):
+            valids[x] = 1
+        ranges.append(valids)
+        valids = {}
+    return ranges
 
+def getOrder():
+    lst = formatInput() # all input data
+    ranges = getValidRanges(lst)
+    v = removeInvalid() # valid rules
+    for x,piece in enumerate(v):
+        tmp = piece.split(',')
+        for xx,z in enumerate(tmp):
+            tmp[xx] = int(z)
+        v[x] = tmp # this whole problem is just formatting data :/
+    #print (v)
+    #print(ranges)
+
+    # step through each ticket ?
+    answer = []
+    num = 0
+
+    while num < len(v[0]): # this kind of doesn't work at all, and needs to be broken down into exactly what needs to be checked 
+        k = 0
+        z =0
+        for k, entry in enumerate(v):
+            if v[k][z] in ranges[num]:
+                continue
+            else:
+                break
+                z += 1
+        else:
+            answer.append(num)
+        num +=1
+    return(answer)
 print(getFailRate()) # part 1
-print(removeInvalid())
+#print(removeInvalid())
+print(getOrder())
