@@ -82,9 +82,17 @@ def getValidRanges(lst):
         valids = {}
     return ranges
 
+def getUpperLower(lst):
+    result = []
+    for rule in lst[0]: # this function is JUST as bad as it was the first time ... :)
+        s = rule.split(": ")[1:]
+        r = s[0].replace(': ',"-").replace(' ','-').split('-')
+        result.append([(int(r[0]),int(r[1])),(int(r[3]),int(r[4]))])
+    return result
+
 def getOrder():
     lst = formatInput() # all input data
-    ranges = getValidRanges(lst)
+    rng = getUpperLower(lst)
     v = removeInvalid() # valid rules
     for x,piece in enumerate(v):
         tmp = piece.split(',')
@@ -98,19 +106,125 @@ def getOrder():
     answer = []
     num = 0
 
-    while num < len(v[0]): # this kind of doesn't work at all, and needs to be broken down into exactly what needs to be checked 
-        k = 0
-        z =0
-        for k, entry in enumerate(v):
-            if v[k][z] in ranges[num]:
-                continue
+    for index,entry in enumerate(rng):
+        tkt = v[0]
+        #for tkt in v:
+            # oh GOD the O(n^3) in three lines! ( it is probably worse with all the other functions leading up to here ... )
+        for ind,x in enumerate(tkt):
+            print(f"Checking {x} against {entry}")
+            if (x >= entry[0][0] and x<= entry[0][1]) or (x >= entry[1][0] and x <= entry[1][1]): # x is valid for the ticket
+                print(f"{tkt[ind]} works so checking index: {ind} against others ")
+                    # this is a valid range, so check it in the other tickets
+                for othertkt in v:
+                    if (othertkt[ind] >= entry[0][0] and othertkt[ind]<= entry[0][1]) or (othertkt[ind] >= entry[1][0] and othertkt[ind] <= entry[1][1]):
+                        print(f"{othertkt[ind]} works, continuing")
+                        continue
+
+                    else:
+                        print(f"{othertkt[ind]} DOESN't WOrk for {entry}, moving on")
+                        break
+                else:
+                    print(f"{othertkt[ind]} works(FINAL) so adding that index{ind} because it seems correct? ")
+                    answer.append(ind) # maybe ?
+                    break
+                #else:
+                #    break # this is an invalid range for the ticket, and so the ticket is not considered...
+            #else: # if x is valid for ALL tickets, then this is right, append it to answer doc
+            #    answer.append(index)
+    return answer
+    # step through each description, and then step through tickets until you find a field that matches all.
+    # return that field.
+
+# This day blows ...
+
+# what I should ACTUALLY Do,
+# loop through each rules, and find every field that is valid for that field, and from there find a way to map them...
+def betterFormat(lst):
+    # this formats similar rules together... why tf didn't I do this ?
+    result = []
+    tmp = []
+    for ind,field in enumerate(lst):
+        for x in lst:
+            tmp.append(x[ind])
+        result.append(tmp)
+        tmp = []
+    return result
+
+
+
+def validFields():
+    valids = {}
+    lst = formatInput()
+    rng = getUpperLower(lst)
+    v = removeInvalid() # this is kinda dumb too, why is it remaking the lst again ?
+    for x,piece in enumerate(v): # why is this HERE
+        tmp = piece.split(',')
+        for xx,z in enumerate(tmp):
+            tmp[xx] = int(z)
+        v[x] = tmp
+    v2 = betterFormat(v)
+    print(v2) # wow
+
+    for z,range in enumerate(rng):
+        #print(f"checking against {range}")
+        k = True
+        for i,index in enumerate(v2):
+
+            for num in index:
+                #print(f"checking if {num} valid")
+                if (num >= range[0][0] and num <= range[0][1]) or (num >= range[1][0] and num <= range[1][1]): # the check is good
+                    #print(f"{num} is valid for {range}")
+                    continue
+                else:
+                    #print("not valid moving on")
+                    k = False
+                    break
+
+            if k: # if every number in the range was valid, do this
+                if i in valids.keys():
+                    valids[i].append(z)
+                else:
+                    valids[i] = [z]
             else:
-                break
-                z += 1
-        else:
-            answer.append(num)
-        num +=1
-    return(answer)
+                k = True
+
+
+
+    # for i,index in enumerate(v2):
+    #     for num in index:
+    #         for range in rng:
+    #             if (num >= range[0][0 ]and num <= range [0][1]) or (num >= range[1][0] and num <= range[1][1]): # the check is good
+    #                 continue
+    #             else:
+    #                 break
+    #     else: # if every number in the range was valid, do this
+    #         if i in valids.keys():
+    #             valids[i].append(z)
+    #         else:
+    #             valids[i] = [z]
+    return valids
+
+def getCorrectOrder(): # almost there
+    v = validFields()
+    print(v)
+    answer = {}
+    # find every index with only a single option, and remove that from V, and also remove indexes that correlate to that
+    while len(answer) < len(v)-1:
+        for key in v:
+            print(f" {v[key]} and {len(v[key])}")
+            if len(v[key]) == 1:
+                target = v[key][0]
+                answer[key] = target
+                print(f" looking for {target} in v")
+                for x in v:
+                    if target in v[x]:
+                        print(f" target {target} found in {v[x]}")
+                        v[x].remove(target)
+    print(answer)
+
+
 print(getFailRate()) # part 1
 #print(removeInvalid())
-print(getOrder())
+#print(getOrder())
+#print(validFields())
+print(getCorrectOrder())
