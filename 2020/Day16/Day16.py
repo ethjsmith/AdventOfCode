@@ -1,3 +1,4 @@
+# man what a day... there's like 100 lines of unused/broken/commented out code, and im not cleaning it up :^)
 import sys
 def getInput():
     with open(sys.argv[1]) as f:
@@ -111,20 +112,20 @@ def getOrder():
         #for tkt in v:
             # oh GOD the O(n^3) in three lines! ( it is probably worse with all the other functions leading up to here ... )
         for ind,x in enumerate(tkt):
-            print(f"Checking {x} against {entry}")
+            #print(f"Checking {x} against {entry}")
             if (x >= entry[0][0] and x<= entry[0][1]) or (x >= entry[1][0] and x <= entry[1][1]): # x is valid for the ticket
-                print(f"{tkt[ind]} works so checking index: {ind} against others ")
+                #print(f"{tkt[ind]} works so checking index: {ind} against others ")
                     # this is a valid range, so check it in the other tickets
                 for othertkt in v:
                     if (othertkt[ind] >= entry[0][0] and othertkt[ind]<= entry[0][1]) or (othertkt[ind] >= entry[1][0] and othertkt[ind] <= entry[1][1]):
-                        print(f"{othertkt[ind]} works, continuing")
+                        #print(f"{othertkt[ind]} works, continuing")
                         continue
 
                     else:
-                        print(f"{othertkt[ind]} DOESN't WOrk for {entry}, moving on")
+                        #print(f"{othertkt[ind]} DOESN't WOrk for {entry}, moving on")
                         break
                 else:
-                    print(f"{othertkt[ind]} works(FINAL) so adding that index{ind} because it seems correct? ")
+                    #print(f"{othertkt[ind]} works(FINAL) so adding that index{ind} because it seems correct? ")
                     answer.append(ind) # maybe ?
                     break
                 #else:
@@ -143,7 +144,9 @@ def betterFormat(lst):
     # this formats similar rules together... why tf didn't I do this ?
     result = []
     tmp = []
-    for ind,field in enumerate(lst):
+    #for ind,field in enumerate(lst):
+    for ind in range(0,len(lst[0])):
+        #print(f"{field} : {len(field)}")
         for x in lst:
             tmp.append(x[ind])
         result.append(tmp)
@@ -163,7 +166,7 @@ def validFields():
             tmp[xx] = int(z)
         v[x] = tmp
     v2 = betterFormat(v)
-    print(v2) # wow
+    #print(v2) # wow
 
     for z,range in enumerate(rng):
         #print(f"checking against {range}")
@@ -206,25 +209,64 @@ def validFields():
 
 def getCorrectOrder(): # almost there
     v = validFields()
-    print(v)
+    #print(v)
     answer = {}
     # find every index with only a single option, and remove that from V, and also remove indexes that correlate to that
     while len(answer) < len(v)-1:
         for key in v:
-            print(f" {v[key]} and {len(v[key])}")
+            #print(f" {v[key]} and {len(v[key])}")
             if len(v[key]) == 1:
                 target = v[key][0]
                 answer[key] = target
-                print(f" looking for {target} in v")
+                #print(f" looking for {target} in v")
                 for x in v:
                     if target in v[x]:
-                        print(f" target {target} found in {v[x]}")
+                        #print(f" target {target} found in {v[x]}")
                         v[x].remove(target)
+    #print(answer)
+    # hard code the calculation :
+    tmp = [answer[0],answer[1],answer[2],answer[3],answer[4],answer[5]]
+    #tmp = [answer[0],answer[1],answer[2]]
     print(answer)
+    print(tmp)
+    #tmp = [answer[1],answer[2],answer[0]]
+    return answer
 
 
+def getMyTicket(th=[0,1,2]):
+    t = getCorrectOrder()
+    print(f" THIS IS T {t}")
+    lst = formatInput()
+    #print(lst[1])
+    v = []
+    for x,piece in enumerate(lst[1][1:]): # copy PASTA v2
+        tmp = piece.split(',')
+        for xx,z in enumerate(tmp):
+            tmp[xx] = int(z)
+        v = tmp
+    print(v)
+    ans = 1
+    for x in th: # get the key that correlates to x value
+        tar = gKey(t,x) # umm
+        ans *= v[tar] # HERE
+        print (f" multiplying index:{t[x]}->{v[t[x]]} current total = {ans}")
+
+    return ans
+
+def gKey(dict,t): # I had the key and values in the wrong order... whoops, this swaps them kinda
+    print(f" finding {t} in the dict")
+    for key, val in dict.items():
+        if t == val:
+            print(f"found {val} at {key}")
+            return key
+    print(f" ERROR {val} {t} not in the dict")
+    return -1
 print(getFailRate()) # part 1
-#print(removeInvalid())
-#print(getOrder())
-#print(validFields())
-print(getCorrectOrder())
+
+print(getMyTicket([0,1,2,3,4,5])) # part 2
+
+
+
+# 0 ticket pos -> correlates to -> 1 answer pos
+# 1 ticket pos -> coorelates to -> 0 answer pos
+# 2 ticket pos -> corelates to -> 2 answer pos
